@@ -1,9 +1,10 @@
 import {makeProject} from '@motion-canvas/core';
 
-import main from './scenes/main?scene';
+import intro from './scenes/intro?scene';
+import links from './scenes/links?scene';
 
 import './global.css';
 
 export default makeProject({
-  scenes: [main],
+  scenes: [intro, links],
 });

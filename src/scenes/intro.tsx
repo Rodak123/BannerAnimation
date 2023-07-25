@@ -1,21 +1,20 @@
-import {makeScene2D, Node, Txt, Rect} from '@motion-canvas/2d';
+import {makeScene2D, Node, Txt, Rect, View2D, Layout} from '@motion-canvas/2d';
 import {
     all,
-    any, chain, createRef, delay, easeInCubic,
-    easeInExpo, easeInOutBack, easeInOutBounce, easeOutBack, easeOutCirc, easeOutCubic,
+    any, createRef, delay, easeInExpo, easeOutBack, easeOutCubic,
     easeOutExpo,
     map,
-    Reference,
-    tween, useLogger, waitFor
+    Reference, sequence,
+    tween, useLogger, useRandom, waitFor
 } from '@motion-canvas/core';
+import {transitionGrid} from "../lib/transition";
+import {typeText} from "../lib/text";
+import {tweenScale} from "../lib/general";
 
 export default makeScene2D(function* (view) {
-
     const primaryColor = '#33ff00';
-    const backgroundColor = '#0A0A0A';
-    const lineHeight = '1%';
 
-    const cursorChar = '█';
+    const lineHeight = '1%';
 
     const textStyle = {
         fontWeight: 500,
@@ -75,17 +74,17 @@ export default makeScene2D(function* (view) {
     mask().scale(0);
 
     yield* waitFor(0.1);
-    title().text(cursorChar)
+    title().text('█')
     const typeSpeed = 0.08;
 
     yield* waitFor(typeSpeed);
-    yield* typeText(title, '', 'Rodak', cursorChar, typeSpeed);
+    yield* typeText(title, '', 'Rodak', typeSpeed);
     yield* waitFor(0.1);
-    yield* typeText(title, 'Rodak', 'Dev', cursorChar, typeSpeed);
+    yield* typeText(title, 'Rodak', 'Dev', typeSpeed);
     yield* waitFor(0.2);
-    yield* typeText(title, 'RodakDev', '(', cursorChar, typeSpeed);
+    yield* typeText(title, 'RodakDev', '(', typeSpeed);
     yield* waitFor(0.15);
-    yield* typeText(title, 'RodakDev(', ')', cursorChar, typeSpeed);
+    yield* typeText(title, 'RodakDev(', ')', typeSpeed);
     title().text('RodakDev()');
 
     yield* tweenScale(title, 0.8, 0.75, 0.5, easeInExpo);
@@ -160,17 +159,15 @@ export default makeScene2D(function* (view) {
         semicolon().scale(easeOutBack(value, 0.1, 1));
     });
 
-    yield* waitFor(0.75);
+    yield* waitFor(1);
+
+    let transitionGridOut = {
+        gridNode: new Layout({}),
+        duration: 0
+    };
+    yield* transitionGrid('out', view, primaryColor, transitionGridOut);
+    transitionGridOut.gridNode.remove();
 });
 
-function* tweenScale(ref: Reference<any>, seconds: number, from: number, to: number, easeFunction: (value: number) => number){
-    yield* tween(seconds, value => {
-        ref().scale(map(from, to, easeFunction(value)));
-    });
-}
 
-function* typeText(text: Reference<Txt>, left: string, toType: string, cursorChar: string, typeSpeed: number){
-    yield* tween(typeSpeed * toType.length, value => {
-        text().text(left + toType.substring(0, Math.floor(map(0, toType.length, value))) + cursorChar);
-    });
-}
+
