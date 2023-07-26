@@ -87,7 +87,7 @@ export default makeScene2D(function* (view) {
     yield* typeText(title, 'RodakDev(', ')', typeSpeed);
     title().text('RodakDev()');
 
-    yield* tweenScale(title, 0.8, 0.75, 0.5, easeInExpo);
+    yield* tweenScale(title, 0.5, 0.75, 0.5, easeInExpo);
 
     mask().scale(1);
     yield* all(
